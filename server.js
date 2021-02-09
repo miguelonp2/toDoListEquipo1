@@ -3,7 +3,7 @@
  */
 const express = require('express')
 const app = express();
-const port = 3000;
+const port = 8080;
 
 
 /**
@@ -11,7 +11,7 @@ const port = 3000;
  *  - Creamos la rama con git branch NOMBRERAMA
  *  - Nos cambiamos con git checkout NOMBRERAMA
  *  - Para unir las ramas git merge NOMBRERAMA
- *     - Es importante saber que debes ir primero a la rama que quieres actualizar con checkout porque se traerá la    rama que escribas
+ *  - Es importante saber que debes ir primero a la rama que quieres actualizar con checkout porque se traerá la rama que escribas
  */
 
 /**
