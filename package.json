@@ -1,0 +1,19 @@
+{
+  "name": "pablohace",
+  "version": "1.0.0",
+  "description": "Una app para saber que tiene que hacer pablo",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miguelonp2/toDoListEquipo1.git"
+  },
+  "author": "Equipo1",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/miguelonp2/toDoListEquipo1/issues"
+  },
+  "homepage": "https://github.com/miguelonp2/toDoListEquipo1#readme"
+}
