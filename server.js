@@ -2,8 +2,25 @@
  *  Require
  */
 const express = require('express')
+const firebase = require("firebase-admin");
+
+// configuración de firebase
+const serviceAccount = require("./keyFirebase.json");
+firebase.initializeApp({
+    credential: firebase.credential.cert(serviceAccount),
+    databaseURL: "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app"
+});
+const db = firebase.database();
+const tareasRef = db.ref("/tareas");
+
+// configuración de Express
 const app = express();
 const port = 8080;
+
+
+
+
+
 
 
 /**
@@ -18,7 +35,7 @@ const port = 8080;
  * EndPoints
  */
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('API PABLOHACE v1')
 });
 
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
