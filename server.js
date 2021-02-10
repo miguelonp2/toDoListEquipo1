@@ -1,16 +1,16 @@
 /**
  *  Require
  */
-const express = require('express')
+const express = require("express");
 const firebase = require("firebase-admin");
 const { isDate, isNumber, isString, isBoolean } = require("./validator");
-
 
 // configuración de firebase
 const serviceAccount = require("./keyFirebase.json");
 firebase.initializeApp({
-    credential: firebase.credential.cert(serviceAccount),
-    databaseURL: "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app"
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL:
+    "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app",
 });
 const db = firebase.database();
 const tareasRef = db.ref("/tareas");
@@ -21,29 +21,27 @@ const port = 8080;
 app.use(express.json());
 
 tareasRef.set({
-    tareaPrueba: {
-        nombre: "Lavar Ropa",
-        descripcion: "Tengo que poner la ropa en la la lavadora",
-        creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
-        completada: false,
-        //fechaCompletada: new Date(),
-        prioridad: 2,
-        archivada: false
-    },
-    tareaPrueba2: {
-        nombre: "Lavar Coche",
-        descripcion: "Tengo que ir a REPSOL a lavar el coche",
-        creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
-        completada: false,
-        //fechaCompletada: null,
-        prioridad: 3,
-        archivada: false
-    }
+  tareaPrueba: {
+    nombre: "Lavar Ropa",
+    descripcion: "Tengo que poner la ropa en la la lavadora",
+    creador: "usuario_id_de_firebase",
+    fechaLimite: new Date(),
+    completada: false,
+    //fechaCompletada: new Date(),
+    prioridad: 2,
+    archivada: false,
+  },
+  tareaPrueba2: {
+    nombre: "Lavar Coche",
+    descripcion: "Tengo que ir a REPSOL a lavar el coche",
+    creador: "usuario_id_de_firebase",
+    fechaLimite: new Date(),
+    completada: false,
+    //fechaCompletada: null,
+    prioridad: 3,
+    archivada: false,
+  },
 });
-
-
 
 /**
  * EJEMPLOS DE VALIDADORES CON EL MODULO VALIDATOR BY PABLOTEAM
@@ -76,20 +74,29 @@ tareasRef.set({
 /**
  * EndPoints
  */
-app.get('/', (req, res) => {
-    res.send('API PABLOHACE v1');
+app.get("/", (req, res) => {
+  res.send("API PABLOHACE v1");
 });
 
-app.get('tarea/completada', (req, res) => {
-    const idTarea = req.query.idTarea;
-    const tareaCompletada = db.ref("/tareas/"+idTarea);
-    tareaCompletada.completada = true;
-    res.send('Tarea Completada');
+app.put("/tarea/completada/:id", (req, res) => {
+  const id = req.params.id
+  const referencia = db.ref("/tareas/" + id);
+
+  referencia.update({
+      "completada":true,
+      "date": new Date().getTime()
+  },(error)=>{
+    console.log(error);
+  });
+
+  /*referencia.once("value",(snapshot)=>{
+    console.log(snapshot.val());
+  })
+  res.send({ resp: "referencia" });*/
 });
 
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
 
-
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Example app listening at http://localhost:${port}`);
 });
