@@ -80,9 +80,6 @@ app.get('/', (req, res) => {
     res.send('API PABLOHACE v1');
 });
 
-app.update('/tareas/archivar/:id', (req, res) => {
-
-});
 
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
 
