@@ -80,6 +80,11 @@ app.get('/', (req, res) => {
     res.send('API PABLOHACE v1');
 });
 
+app.get('/tareas', async(req, res) => {
+    const tareas = (await tareasRef.once("value")).val();
+    if (!tareas) return res.status(404).send('No hay tareas')
+    else res.status(200).send(tareas)
+})
 
 app.put('/tareas/archivar/:id', async(req, res) => {
     const tarea = (await tareasRef.child(req.params.id).once("value")).val();
