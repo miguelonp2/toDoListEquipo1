@@ -58,6 +58,13 @@ app.get('/', (req, res) => {
     res.send('API PABLOHACE v1')
 });
 
+app.get('tarea/completada', (req, res) => {
+    const idTarea = req.query.idTarea;
+    const tareaCompletada = db.ref("/tareas/"+idTarea);
+    tareaCompletada.completada = true;
+    res.send('Tarea Completada');
+});
+
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
 
 
