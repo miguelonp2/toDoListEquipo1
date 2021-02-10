@@ -25,7 +25,7 @@ tareasRef.set({
         nombre: "Lavar Ropa",
         descripcion: "Tengo que poner la ropa en la la lavadora",
         creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
+        fechaLimite: new Date().getTime(),
         completada: false,
         //fechaCompletada: new Date(),
         prioridad: 2,
@@ -35,7 +35,7 @@ tareasRef.set({
         nombre: "Lavar Coche",
         descripcion: "Tengo que ir a REPSOL a lavar el coche",
         creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
+        fechaLimite: new Date().getTime(),
         completada: false,
         //fechaCompletada: null,
         prioridad: 3,
@@ -82,7 +82,6 @@ app.get('/', (req, res) => {
 
 
 app.put('/tareas/archivar/:id', async(req, res) => {
-    if (req.params.id.length <= 2) return res.status(400).send({ msg: "Error: los ids suelen ser más largos" });
     const tarea = (await tareasRef.child(req.params.id).once("value")).val();
     if (!tarea) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
     tareasRef.child(req.params.id).update({
