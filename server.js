@@ -18,6 +18,7 @@ const tareasRef = db.ref("/tareas");
 // configuración de Express
 const app = express();
 const port = 8080;
+app.use(express.json());
 
 tareasRef.set({
     tareaPrueba: {
@@ -40,7 +41,9 @@ tareasRef.set({
         prioridad: 3,
         archivada: false
     }
-})
+});
+
+
 
 /**
  * EJEMPLOS DE VALIDADORES CON EL MODULO VALIDATOR BY PABLOTEAM
@@ -50,17 +53,17 @@ tareasRef.set({
  * isBoolean para validar si es un booleano
  */
 
-if (isString("validador de strings")) console.log('Es un String')
-else console.log('No es un string')
+// if (isString("validador de strings")) console.log('Es un String')
+// else console.log('No es un string')
 
-if (isNumber(289)) console.log('Es un número')
-else console.log('No es un numero')
+// if (isNumber(289)) console.log('Es un número')
+// else console.log('No es un numero')
 
-if (isDate(new Date())) console.log('Es una Fecha')
-else console.log('No es una fecha')
+// if (isDate(new Date())) console.log('Es una Fecha')
+// else console.log('No es una fecha')
 
-if (isBoolean(true)) console.log("Es booleano")
-else console.log("no es booleano")
+// if (isBoolean(true)) console.log("Es booleano")
+// else console.log("no es booleano")
 
 /**
  * Comandos GitHub:
@@ -74,7 +77,11 @@ else console.log("no es booleano")
  * EndPoints
  */
 app.get('/', (req, res) => {
-    res.send('API PABLOHACE v1')
+    res.send('API PABLOHACE v1');
+});
+
+app.update('/tareas/archivar/:id', (req, res) => {
+
 });
 
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
