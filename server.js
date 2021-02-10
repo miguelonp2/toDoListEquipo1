@@ -3,6 +3,8 @@
  */
 const express = require('express')
 const firebase = require("firebase-admin");
+const { isDate, isNumber, isString, isBoolean } = require("./validator");
+
 
 // configuración de firebase
 const serviceAccount = require("./keyFirebase.json");
@@ -40,8 +42,25 @@ tareasRef.set({
     }
 })
 
+/**
+ * EJEMPLOS DE VALIDADORES CON EL MODULO VALIDATOR BY PABLOTEAM
+ * isString para validar si es un string
+ * isNumber para validar si es un número
+ * isDate para validar si es una fecha
+ * isBoolean para validar si es un booleano
+ */
 
+if (isString("validador de strings")) console.log('Es un String')
+else console.log('No es un string')
 
+if (isNumber(289)) console.log('Es un número')
+else console.log('No es un numero')
+
+if (isDate(new Date())) console.log('Es una Fecha')
+else console.log('No es una fecha')
+
+if (isBoolean(true)) console.log("Es booleano")
+else console.log("no es booleano")
 
 /**
  * Comandos GitHub:
