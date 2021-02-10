@@ -81,7 +81,17 @@ app.get('/', (req, res) => {
 });
 
 
-/// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
+app.put('/tareas/archivar/:id', async(req, res) => {
+    if (req.params.id.length <= 2) return res.status(400).send({ msg: "Error: los ids suelen ser más largos" });
+    const tarea = (await tareasRef.child(req.params.id).once("value")).val();
+    if (!tarea) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
+    tareasRef.child(req.params.id).update({
+        archivada: true
+    }, (err) => {
+        if (err) return res.send({ msg: "Error en firebase, es hora de usar mongodb" }).status(400);
+        else return res.send({ msg: "La tarea ha sido modificada con exito" }).status(201);
+    });
+})
 
 
 app.listen(port, () => {
