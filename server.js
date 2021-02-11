@@ -24,7 +24,7 @@ tareasRef.set({
   tareaPrueba: {
     nombre: "Lavar Ropa",
     descripcion: "Tengo que poner la ropa en la la lavadora",
-    creador: "usuario_id_de_firebase",
+    //creador: "usuario_id_de_firebase",
     fechaLimite: new Date(),
     completada: false,
     //fechaCompletada: new Date(),
@@ -34,7 +34,7 @@ tareasRef.set({
   tareaPrueba2: {
     nombre: "Lavar Coche",
     descripcion: "Tengo que ir a REPSOL a lavar el coche",
-    creador: "usuario_id_de_firebase",
+    //creador: "usuario_id_de_firebase",
     fechaLimite: new Date(),
     completada: false,
     //fechaCompletada: null,
@@ -87,7 +87,7 @@ app.put("/tarea/completada/:id", (req, res) => {
       "date": new Date().getTime()
   },(error)=>{
     console.log(error);
-    res.send("Tarea "+id+" marcada como completada");
+    res.send({"msg":"Tarea "+id+" marcada como completada"});
   });
 
   /*referencia.once("value",(snapshot)=>{
