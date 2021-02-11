@@ -82,8 +82,8 @@ app.get('/', (req, res) => {
 
 app.get('/tareas', async(req, res) => {
     const tareas = (await tareasRef.once("value")).val();
-    if (!tareas) return res.status(404).send('No hay tareas')
-    else res.status(200).send(tareas)
+    if (!tareas) return res.status(404).send('No hay tareas');
+    else res.status(200).send(Object.keys(tareas).map((value) => { return {...tareas[value], _id: value } }));
 })
 
 app.put('/tareas/archivar/:id', async(req, res) => {
