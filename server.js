@@ -98,7 +98,7 @@ app.put("/tarea/completada/:id", (req, res) => {
 });
 app.get('/tareas', async(req, res) => {
     const tareas = (await tareasRef.once("value")).val();
-    if (!tareas) return res.status(404).send('No hay tareas');
+    if (!tareas) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
     else res.status(200).send(Object.keys(tareas).map((value) => { return {...tareas[value], _id: value } }));
 })
 

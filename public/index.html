@@ -1,134 +1,101 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PabloHace</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
-      integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
-      crossorigin="anonymous"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
     <link rel="stylesheet" href="./css/index.css" />
     <script src="js/main.js" defer></script>
-    <script
-      defersrc="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
-      crossorigin="anonymous"
-    ></script>
-  </head>
+    <script defersrc="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+</head>
 
-  <body>
+<body>
     <nav class="navbar navbar-dark bg-dark">
-      <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1 mx-5"
-          >PabloHace <i class="fas fa-check"></i
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1 mx-5">PabloHace <i class="fas fa-check"></i
         ></span>
-        <span class="navbar-text mx-5"> Todo lo que tienes que hacer </span>
-      </div>
+            <span class="navbar-text mx-5"> Todo lo que tienes que hacer </span>
+        </div>
     </nav>
 
     <main>
-      <div class="container my-5">
-        <div class="card my-5">
-          <div class="card-header">
-            <h5>Crear nueva tarea</h5>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="nombre">Nombre</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="nombre"
-                    id="nombre"
-                    placeholder="Nombre de la Tarea"
-                  />
+
+        <div class="container my-5">
+            <div class="card my-5">
+                <div class="card-header">
+                    <h5>Crear nueva tarea</h5>
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="fechaLimite">Fecha Limite</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    name="fechaLimite"
-                    id="fechaLimite"
-                    placeholder=""
-                  />
-                </div>
-              </div>
-              <div class="col-md-12 my-2">
-                <div class="form-group">
-                  <label for="descripcion">Descripción</label>
-                  <textarea
-                    class="form-control"
-                    name="descripcion"
-                    id="descripcion"
-                    rows="3"
-                    placeholder="Descripción de la tarea"
-                  ></textarea>
-                </div>
-              </div>
-              <div class="col-md-6 my-1">
-                <div class="form-group">
-                  <label for="prioridad">Prioridad</label>
-                  <select name="prioridad" id="prioridad" class="form-control">
+                <div class="card-body">
+                    <form id="form">
+                        <div id="contenedorAlertas"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Nombre de la Tarea" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="fechaLimite">Fecha Limite</label>
+                                    <input type="date" class="form-control" name="fechaLimite" id="fechaLimite" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-md-12 my-2">
+                                <div class="form-group">
+                                    <label for="descripcion">Descripción</label>
+                                    <textarea class="form-control" name="descripcion" id="descripcion" rows="3" placeholder="Descripción de la tarea"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6 my-1">
+                                <div class="form-group">
+                                    <label for="prioridad">Prioridad</label>
+                                    <select name="prioridad" id="prioridad" class="form-control">
                     <option value="5">Urgente</option>
                     <option value="4">Preocupante</option>
                     <option value="3">Normal</option>
                     <option value="2">Sin estrés</option>
                     <option value="1">Relax</option>
                   </select>
-                </div>
-              </div>
-              <div class="col-md-6 my-1">
-                <div class="form-group d-grid">
-                  <label style="opacity: 0">.</label>
-                  <button
-                    id="enviarInformacion"
-                    type="submit"
-                    class="btn btn btn-outline-primary"
-                  >
+                                </div>
+                            </div>
+                            <div class="col-md-6 my-1">
+                                <div class="form-group d-grid">
+                                    <label style="opacity: 0">.</label>
+                                    <button id="enviarInformacion" type="button" class="btn btn btn-outline-primary">
                     Crear
                   </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="card tarea">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                Alguna tarea que tiene que hacer pablo en esta semana.
-                <br />
-                <span class="beforethan">Hacer antes de 20/03/2021</span>
-              </div>
-              <div class="col-md-6 moreInfo">
-                <i class="fas fa-check-circle check"></i>
-              </div>
+            <div class="card tarea">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            Alguna tarea que tiene que hacer pablo en esta semana.
+                            <br />
+                            <span class="beforethan">Hacer antes de 20/03/2021</span>
+                        </div>
+                        <div class="col-md-6 moreInfo">
+                            <i class="fas fa-check-circle check"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </main>
 
     <footer class="footer mt-auto py-3 bg-light">
-      <div class="container">
-        <span class="text-muted"
-          >PabloHace ToDoList © 2021 | Hecha con <i class="fas fa-heart"></i> en
+        <div class="container">
+            <span class="text-muted">PabloHace ToDoList © 2021 | Hecha con <i class="fas fa-heart"></i> en
           TheBridge para Miguel</span
         >
       </div>

@@ -32,10 +32,34 @@ botonEnviar.addEventListener("click", () => {
         prioridad
     }
 
-    consultarAPI('/tarea', 'POST', nuevaTarea)
+    consultarAPI('/tarea', 'POST', nuevaTarea).then(data => {
+        alertaSuccess(data.msg);
+        document.querySelector("#form").reset();
+    }).catch(err => {
+        console.log(err);
+        alertaError(err);
+    })
 
 })
 
 function recogerInformacion(selector) {
     return document.querySelector("#" + selector).value;
+}
+
+function alertaError(msg) {
+    const contenedor = document.querySelector("#contenedorAlertas");
+    const alerta = document.createElement("div")
+    alerta.classList.add('alert', 'alert-danger')
+    alerta.innerText = msg
+    contenedor.appendChild(alerta);
+    setTimeout(() => alerta.remove(), 5000)
+}
+
+function alertaSuccess(msg) {
+    const contenedor = document.querySelector("#contenedorAlertas");
+    const alerta = document.createElement("div")
+    alerta.classList.add('alert', 'alert-success')
+    alerta.innerText = msg
+    contenedor.appendChild(alerta);
+    setTimeout(() => alerta.remove(), 5000)
 }
