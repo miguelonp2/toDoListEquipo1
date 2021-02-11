@@ -18,30 +18,30 @@ const tareasRef = db.ref("/tareas");
 const app = express();
 const port = 8080;
 app.use(express.json());
-app.use(express.static('public'))
+app.use(express.static('app'))
 
 
 tareasRef.set({
-    tareaPrueba: {
-        nombre: "Lavar Ropa",
-        descripcion: "Tengo que poner la ropa en la la lavadora",
-        creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
-        completada: false,
-        //fechaCompletada: new Date(),
-        prioridad: 2,
-        archivada: false,
-    },
-    tareaPrueba2: {
-        nombre: "Lavar Coche",
-        descripcion: "Tengo que ir a REPSOL a lavar el coche",
-        creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
-        completada: false,
-        //fechaCompletada: null,
-        prioridad: 3,
-        archivada: false,
-    },
+  tareaPrueba: {
+    nombre: "Lavar Ropa",
+    descripcion: "Tengo que poner la ropa en la la lavadora",
+    //creador: "usuario_id_de_firebase",
+    fechaLimite: new Date(),
+    completada: false,
+    //fechaCompletada: new Date(),
+    prioridad: 2,
+    archivada: false,
+  },
+  tareaPrueba2: {
+    nombre: "Lavar Coche",
+    descripcion: "Tengo que ir a REPSOL a lavar el coche",
+    //creador: "usuario_id_de_firebase",
+    fechaLimite: new Date(),
+    completada: false,
+    //fechaCompletada: null,
+    prioridad: 3,
+    archivada: false,
+  },
 });
 
 /**
@@ -80,21 +80,21 @@ app.get("/", (req, res) => {
 });
 
 app.put("/tarea/completada/:id", (req, res) => {
-    const id = req.params.id
-    const referencia = db.ref("/tareas/" + id);
+  const id = req.params.id
+  const referencia = db.ref("/tareas/" + id);
 
-    referencia.update({
-        "completada": true,
-        "date": new Date().getTime()
-    }, (error) => {
-        console.log(error);
-        res.send("Tarea " + id + " marcada como completada");
-    });
+  referencia.update({
+      "completada":true,
+      "date": new Date().getTime()
+  },(error)=>{
+    console.log(error);
+    res.send({"msg":"Tarea "+id+" marcada como completada"});
+  });
 
-    /*referencia.once("value",(snapshot)=>{
-      console.log(snapshot.val());
-    })
-    res.send({ resp: "referencia" });*/
+  /*referencia.once("value",(snapshot)=>{
+    console.log(snapshot.val());
+  })
+  res.send({ resp: "referencia" });*/
 });
 app.get('/tareas', async(req, res) => {
     const tareas = (await tareasRef.once("value")).val();
