@@ -8,9 +8,8 @@ const { isDate, isNumber, isString, isBoolean } = require("./validator");
 // configuración de firebase
 const serviceAccount = require("./keyFirebase.json");
 firebase.initializeApp({
-  credential: firebase.credential.cert(serviceAccount),
-  databaseURL:
-    "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app",
+    credential: firebase.credential.cert(serviceAccount),
+    databaseURL: "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app",
 });
 const db = firebase.database();
 const tareasRef = db.ref("/tareas");
@@ -19,28 +18,30 @@ const tareasRef = db.ref("/tareas");
 const app = express();
 const port = 8080;
 app.use(express.json());
+app.use(express.static('public'))
+
 
 tareasRef.set({
-  tareaPrueba: {
-    nombre: "Lavar Ropa",
-    descripcion: "Tengo que poner la ropa en la la lavadora",
-    creador: "usuario_id_de_firebase",
-    fechaLimite: new Date(),
-    completada: false,
-    //fechaCompletada: new Date(),
-    prioridad: 2,
-    archivada: false,
-  },
-  tareaPrueba2: {
-    nombre: "Lavar Coche",
-    descripcion: "Tengo que ir a REPSOL a lavar el coche",
-    creador: "usuario_id_de_firebase",
-    fechaLimite: new Date(),
-    completada: false,
-    //fechaCompletada: null,
-    prioridad: 3,
-    archivada: false,
-  },
+    tareaPrueba: {
+        nombre: "Lavar Ropa",
+        descripcion: "Tengo que poner la ropa en la la lavadora",
+        creador: "usuario_id_de_firebase",
+        fechaLimite: new Date(),
+        completada: false,
+        //fechaCompletada: new Date(),
+        prioridad: 2,
+        archivada: false,
+    },
+    tareaPrueba2: {
+        nombre: "Lavar Coche",
+        descripcion: "Tengo que ir a REPSOL a lavar el coche",
+        creador: "usuario_id_de_firebase",
+        fechaLimite: new Date(),
+        completada: false,
+        //fechaCompletada: null,
+        prioridad: 3,
+        archivada: false,
+    },
 });
 
 /**
@@ -75,25 +76,25 @@ tareasRef.set({
  * EndPoints
  */
 app.get("/", (req, res) => {
-  res.send("API PABLOHACE v1");
+    res.send("API PABLOHACE v1");
 });
 
 app.put("/tarea/completada/:id", (req, res) => {
-  const id = req.params.id
-  const referencia = db.ref("/tareas/" + id);
+    const id = req.params.id
+    const referencia = db.ref("/tareas/" + id);
 
-  referencia.update({
-      "completada":true,
-      "date": new Date().getTime()
-  },(error)=>{
-    console.log(error);
-    res.send("Tarea "+id+" marcada como completada");
-  });
+    referencia.update({
+        "completada": true,
+        "date": new Date().getTime()
+    }, (error) => {
+        console.log(error);
+        res.send("Tarea " + id + " marcada como completada");
+    });
 
-  /*referencia.once("value",(snapshot)=>{
-    console.log(snapshot.val());
-  })
-  res.send({ resp: "referencia" });*/
+    /*referencia.once("value",(snapshot)=>{
+      console.log(snapshot.val());
+    })
+    res.send({ resp: "referencia" });*/
 });
 app.get('/tareas', async(req, res) => {
     const tareas = (await tareasRef.once("value")).val();
@@ -115,5 +116,5 @@ app.put('/tareas/archivar/:id', async(req, res) => {
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`Example app listening at http://localhost:${port}`);
 });
