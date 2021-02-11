@@ -1,0 +1,27 @@
+.check {
+    color: green;
+    font-size: 20px;
+}
+
+.check:hover {
+    color: rgb(23, 177, 23);
+    font-size: 21px;
+}
+
+.moreInfo {
+    text-align: right;
+}
+
+.beforethan {
+    font-size: 14px;
+    font-style: italic;
+    color: rgb(85, 85, 85);
+}
+
+.textoBlanco {
+    color: white!important;
+}
+
+.tarea {
+    margin-bottom: 10px;
+}
