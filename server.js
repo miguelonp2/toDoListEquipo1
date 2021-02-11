@@ -87,6 +87,7 @@ app.put("/tarea/completada/:id", (req, res) => {
       "date": new Date().getTime()
   },(error)=>{
     console.log(error);
+    res.send("Tarea "+id+" marcada como completada");
   });
 
   /*referencia.once("value",(snapshot)=>{
@@ -94,6 +95,22 @@ app.put("/tarea/completada/:id", (req, res) => {
   })
   res.send({ resp: "referencia" });*/
 });
+app.get('/tareas', async(req, res) => {
+    const tareas = (await tareasRef.once("value")).val();
+    if (!tareas) return res.status(404).send('No hay tareas');
+    else res.status(200).send(Object.keys(tareas).map((value) => { return {...tareas[value], _id: value } }));
+})
+
+app.put('/tareas/archivar/:id', async(req, res) => {
+    const tarea = (await tareasRef.child(req.params.id).once("value")).val();
+    if (!tarea) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
+    tareasRef.child(req.params.id).update({
+        archivada: true
+    }, (err) => {
+        if (err) return res.send({ msg: "Error en firebase, es hora de usar mongodb" }).status(400);
+        else return res.send({ msg: "La tarea ha sido modificada con exito" }).status(201);
+    });
+})
 
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
 
