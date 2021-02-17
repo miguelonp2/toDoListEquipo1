@@ -22,26 +22,26 @@ app.use(express.static('app'))
 
 
 tareasRef.set({
-  tareaPrueba: {
-    nombre: "Lavar Ropa",
-    descripcion: "Tengo que poner la ropa en la la lavadora",
-    //creador: "usuario_id_de_firebase",
-    fechaLimite: new Date(),
-    completada: false,
-    //fechaCompletada: new Date(),
-    prioridad: 2,
-    archivada: false,
-  },
-  tareaPrueba2: {
-    nombre: "Lavar Coche",
-    descripcion: "Tengo que ir a REPSOL a lavar el coche",
-    //creador: "usuario_id_de_firebase",
-    fechaLimite: new Date(),
-    completada: false,
-    //fechaCompletada: null,
-    prioridad: 3,
-    archivada: false,
-  },
+    tareaPrueba: {
+        nombre: "Lavar Ropa",
+        descripcion: "Tengo que poner la ropa en la la lavadora",
+        //creador: "usuario_id_de_firebase",
+        fechaLimite: new Date(),
+        completada: false,
+        //fechaCompletada: new Date(),
+        prioridad: 2,
+        archivada: false,
+    },
+    tareaPrueba2: {
+        nombre: "Lavar Coche",
+        descripcion: "Tengo que ir a REPSOL a lavar el coche",
+        //creador: "usuario_id_de_firebase",
+        fechaLimite: new Date(),
+        completada: false,
+        //fechaCompletada: null,
+        prioridad: 3,
+        archivada: false,
+    },
 });
 
 /**
@@ -83,48 +83,40 @@ app.get("/", (req, res) => {
  * CREAR TAREA
  */
 app.post("/tareas", (req, res) => {
-  const {nombre,  creador, fechaLimite, descripcion, prioridad} = req.body;
-  if (isString(nombre) && isString(creador) && isString(fechaLimite) && isNumber(prioridad)){
-    tareasRef.push({
-      archivada: false,
-      completa: false,
-      creador,
-      nombre,
-      descripcion,
-      fechaLimite,
-      prioridad
-    }, (error)=>{
-      if (error)
-        res.send({"msg":"Ha habido un error al crear la tarea: " + error});
-      else
-        res.send({"msg":"Tarea creada"});
+    const { nombre, creador, fechaLimite, descripcion, prioridad } = req.body;
+    if (isString(descripcion) && isString(nombre) && isString(creador) && isString(fechaLimite) && isNumber(prioridad)) {
+        tareasRef.push({
+            archivada: false,
+            completa: false,
+            creador,
+            nombre,
+            descripcion,
+            fechaLimite,
+            prioridad
+        }, (error) => {
+            if (error)
+                res.status(400).send({ "msg": "Ha habido un error al crear la tarea: " + error });
+            else
+                res.status(201).send({ "msg": "Tarea creada" });
+        });
+    } else {
+        res.status(400).send({ "msg": "datos mal introducidos" });
+    }
+});
+
+app.put("/tareas/completada/:id", (req, res) => {
+    const id = req.params.id
+    const referencia = db.ref("/tareas/" + id);
+
+    referencia.update({
+        "completada": true,
+        "date": new Date().getTime()
+    }, (error) => {
+        if (error) res.status(400).send({ "msg": "Ha ocurrido un error: " + error });
+        else res.status(201).send({ "msg": "Tarea " + id + " marcada como completada" });
     });
-    //tareasRef.once("value", (snapshot)=>{
-    //  console.log(snapshot.val());
-    //});
-  }
-  else{
-    res.send({"msg":"datos mal introducidos"});
-  }
 });
 
-app.put("/tarea/completada/:id", (req, res) => {
-  const id = req.params.id
-  const referencia = db.ref("/tareas/" + id);
-
-  referencia.update({
-      "completada":true,
-      "date": new Date().getTime()
-  },(error)=>{
-    console.log(error);
-    res.send({"msg":"Tarea "+id+" marcada como completada"});
-  });
-
-  /*referencia.once("value",(snapshot)=>{
-    console.log(snapshot.val());
-  })
-  res.send({ resp: "referencia" });*/
-});
 app.get('/tareas', async(req, res) => {
     const tareas = (await tareasRef.once("value")).val();
     if (!tareas) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
@@ -137,8 +129,8 @@ app.put('/tareas/archivar/:id', async(req, res) => {
     tareasRef.child(req.params.id).update({
         archivada: true
     }, (err) => {
-        if (err) return res.send({ msg: "Error en firebase, es hora de usar mongodb" }).status(400);
-        else return res.send({ msg: "La tarea ha sido modificada con exito" }).status(201);
+        if (err) return res.status(400).send({ msg: "Error en firebase, es hora de usar mongodb" });
+        else return res.status(201).send({ msg: "La tarea ha sido modificada con exito" });
     });
 })
 
