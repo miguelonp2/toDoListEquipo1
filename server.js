@@ -8,9 +8,8 @@ const { isDate, isNumber, isString, isBoolean } = require("./validator");
 // configuración de firebase
 const serviceAccount = require("./keyFirebase.json");
 firebase.initializeApp({
-  credential: firebase.credential.cert(serviceAccount),
-  databaseURL:
-    "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app",
+    credential: firebase.credential.cert(serviceAccount),
+    databaseURL: "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app",
 });
 const db = firebase.database();
 const tareasRef = db.ref("/tareas");
@@ -19,6 +18,8 @@ const tareasRef = db.ref("/tareas");
 const app = express();
 const port = 8080;
 app.use(express.json());
+app.use(express.static('app'))
+
 
 tareasRef.set({
   tareaPrueba: {
@@ -75,7 +76,7 @@ tareasRef.set({
  * EndPoints
  */
 app.get("/", (req, res) => {
-  res.send("API PABLOHACE v1");
+    res.send("API PABLOHACE v1");
 });
 
 app.put("/tarea/completada/:id", (req, res) => {
@@ -97,7 +98,7 @@ app.put("/tarea/completada/:id", (req, res) => {
 });
 app.get('/tareas', async(req, res) => {
     const tareas = (await tareasRef.once("value")).val();
-    if (!tareas) return res.status(404).send('No hay tareas');
+    if (!tareas) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
     else res.status(200).send(Object.keys(tareas).map((value) => { return {...tareas[value], _id: value } }));
 })
 
@@ -115,5 +116,5 @@ app.put('/tareas/archivar/:id', async(req, res) => {
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`Example app listening at http://localhost:${port}`);
 });
