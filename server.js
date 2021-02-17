@@ -79,6 +79,35 @@ app.get("/", (req, res) => {
     res.send("API PABLOHACE v1");
 });
 
+/**
+ * CREAR TAREA
+ */
+app.post("/tareas", (req, res) => {
+  const {nombre,  creador, fechaLimite, descripcion, prioridad} = req.body;
+  if (isString(nombre) && isString(creador) && isString(fechaLimite) && isNumber(prioridad)){
+    tareasRef.push({
+      archivada: false,
+      completa: false,
+      creador,
+      nombre,
+      descripcion,
+      fechaLimite,
+      prioridad
+    }, (error)=>{
+      if (error)
+        res.send({"msg":"Ha habido un error al crear la tarea: " + error});
+      else
+        res.send({"msg":"Tarea creada"});
+    });
+    //tareasRef.once("value", (snapshot)=>{
+    //  console.log(snapshot.val());
+    //});
+  }
+  else{
+    res.send({"msg":"datos mal introducidos"});
+  }
+});
+
 app.put("/tarea/completada/:id", (req, res) => {
   const id = req.params.id
   const referencia = db.ref("/tareas/" + id);
