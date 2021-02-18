@@ -83,7 +83,8 @@ app.get("/", (req, res) => {
  * CREAR TAREA
  */
 app.post("/tareas", (req, res) => {
-    const { nombre, creador, fechaLimite, descripcion, prioridad } = req.body;
+    let { nombre, creador, fechaLimite, descripcion, prioridad } = req.body;
+    creador = 'un usuario';
     if (isString(descripcion) && isString(nombre) && isString(creador) && isString(fechaLimite) && isNumber(prioridad)) {
         tareasRef.push({
             archivada: false,

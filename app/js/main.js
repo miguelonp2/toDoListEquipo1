@@ -9,7 +9,13 @@ const consultarAPI = (endpoint, method, data = "") => {
     if (data == "") {
         options = { method };
     } else {
-        options = { method, body: JSON.stringify(data) };
+        options = {
+            method,
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
     }
 
     return fetch(`${API_URL}${endpoint}`, options).then((response) =>
@@ -22,28 +28,30 @@ botonEnviar.addEventListener("click", () => {
     let nombre = recogerInformacion("nombre");
     let fechaLimite = new Date(recogerInformacion("fechaLimite"));
     let descripcion = recogerInformacion("descripcion");
-    let prioridad = recogerInformacion("prioridad");
-    console.log(nombre, fechaLimite, descripcion, prioridad);
-    validarString(nombre, 35);
-    validarString(descripcion, 500);
-    validarInt(prioridad, 1, 5);
-    validarFecha(fechaLimite);
-    const nuevaTarea = {
-        nombre,
-        fechaLimite,
-        descripcion,
-        prioridad,
-    };
+    let prioridad = parseInt(recogerInformacion("prioridad"));
 
-    consultarAPI("/tarea", "POST", nuevaTarea)
-        .then((data) => {
-            alertaSuccess(data.msg);
-            document.querySelector("#form").reset();
-        })
-        .catch((err) => {
-            console.log(err);
-            alertaError(err);
-        });
+    if (validarString(nombre, 35) &&
+        validarString(descripcion, 500) &&
+        validarInt(prioridad, 1, 5) &&
+        validarFecha(fechaLimite)) {
+        const nuevaTarea = {
+            nombre,
+            fechaLimite,
+            descripcion,
+            prioridad,
+        };
+
+
+        consultarAPI("/tareas", "POST", nuevaTarea)
+            .then((data) => {
+                alertaSuccess(data.msg);
+                document.querySelector("#form").reset();
+            })
+            .catch((err) => {
+                console.log(err);
+                alertaError(err);
+            });
+    }
 });
 
 
