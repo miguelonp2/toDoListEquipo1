@@ -16,6 +16,7 @@
     font-size: 14px;
     font-style: italic;
     color: rgb(85, 85, 85);
+    display: block;
 }
 
 .textoBlanco {
@@ -25,3 +26,4 @@
 .tarea {
     margin-bottom: 10px;
 }
+
