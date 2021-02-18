@@ -21,28 +21,28 @@ app.use(express.json());
 app.use(express.static('app'))
 
 
-tareasRef.set({
-    tareaPrueba: {
-        nombre: "Lavar Ropa",
-        descripcion: "Tengo que poner la ropa en la la lavadora",
-        //creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
-        completada: false,
-        //fechaCompletada: new Date(),
-        prioridad: 2,
-        archivada: false,
-    },
-    tareaPrueba2: {
-        nombre: "Lavar Coche",
-        descripcion: "Tengo que ir a REPSOL a lavar el coche",
-        //creador: "usuario_id_de_firebase",
-        fechaLimite: new Date(),
-        completada: false,
-        //fechaCompletada: null,
-        prioridad: 3,
-        archivada: false,
-    },
-});
+// tareasRef.set({
+//     tareaPrueba: {
+//         nombre: "Lavar Ropa",
+//         descripcion: "Tengo que poner la ropa en la la lavadora",
+//         //creador: "usuario_id_de_firebase",
+//         fechaLimite: new Date(),
+//         completada: false,
+//         //fechaCompletada: new Date(),
+//         prioridad: 2,
+//         archivada: false,
+//     },
+//     tareaPrueba2: {
+//         nombre: "Lavar Coche",
+//         descripcion: "Tengo que ir a REPSOL a lavar el coche",
+//         //creador: "usuario_id_de_firebase",
+//         fechaLimite: new Date(),
+//         completada: false,
+//         //fechaCompletada: null,
+//         prioridad: 3,
+//         archivada: false,
+//     },
+// });
 
 /**
  * EJEMPLOS DE VALIDADORES CON EL MODULO VALIDATOR BY PABLOTEAM

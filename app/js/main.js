@@ -103,7 +103,9 @@ async function getTareas() {
     try {
         let tareas = await consultarAPI("/tareas", "GET");
         if (!tareas) return alertaError('No hay tareas, prueba creando una');
-        else return tareas;
+        tareas.map(tarea => {
+            crearTarea(tarea._id, tarea.nombre, tarea.fechaLimite, tarea.descripcion);
+        })
     } catch (e) {
         console.error(e);
         alertaError(e);
