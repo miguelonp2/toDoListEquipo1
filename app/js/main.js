@@ -46,6 +46,8 @@ botonEnviar.addEventListener("click", () => {
             .then((data) => {
                 alertaSuccess(data.msg);
                 document.querySelector("#form").reset();
+                getTareas();
+
             })
             .catch((err) => {
                 console.log(err);
@@ -110,70 +112,73 @@ async function getTareas() {
         console.error(e);
         alertaError(e);
     }
-  }
-function crearTarea(idTarea, titulo, fecha, descripcion){
-  date = new Date(fecha);
-  let day = date.getDate()
-  let month = date.getMonth() + 1
-  let year = date.getFullYear()
+}
 
-  if(month < 10){
-    date = `${day}/0${month}/${year}`;
-  }else{
-    date = `${day}/${month}/${year}`;
-  }
-  fecha = date;
-  const main = document.querySelector("main .container");
-  let contenedorTarea = document.createElement("div");
-  contenedorTarea.id = idTarea;
-  contenedorTarea.className = "card tarea";
+getTareas();
 
-  let cardBody = document.createElement("div");
-  cardBody.className = "card-body";
-  contenedorTarea.appendChild(cardBody);
+function crearTarea(idTarea, titulo, fecha, descripcion) {
+    date = new Date(fecha);
+    let day = date.getDate()
+    let month = date.getMonth() + 1
+    let year = date.getFullYear()
 
-  let row = document.createElement("div");
-  row.className = "row";
-  cardBody.appendChild(row);
+    if (month < 10) {
+        date = `${day}/0${month}/${year}`;
+    } else {
+        date = `${day}/${month}/${year}`;
+    }
+    fecha = date;
+    const main = document.querySelector("main .container");
+    let contenedorTarea = document.createElement("div");
+    contenedorTarea.id = idTarea;
+    contenedorTarea.className = "card tarea";
 
-  let colMd6 = document.createElement("div");
-  colMd6.className = "col-md-6";
-  row.appendChild(colMd6);
+    let cardBody = document.createElement("div");
+    cardBody.className = "card-body";
+    contenedorTarea.appendChild(cardBody);
 
-  let h4 = document.createElement("h4");
-  h4.innerText = titulo;
-  colMd6.appendChild(h4);
+    let row = document.createElement("div");
+    row.className = "row";
+    cardBody.appendChild(row);
 
-  let periodo = document.createElement("span");
-  periodo.className = "beforethan";
-  periodo.innerText = "Hacer antes de "+fecha;
-  colMd6.appendChild(periodo);
+    let colMd6 = document.createElement("div");
+    colMd6.className = "col-md-6";
+    row.appendChild(colMd6);
 
-  let colMd6more = document.createElement("div");
-  colMd6more.className = "col-md-6 moreInfo mt-2 mt-md-0";
-  row.appendChild(colMd6more);
+    let h4 = document.createElement("h4");
+    h4.innerText = titulo;
+    colMd6.appendChild(h4);
 
-  let contenedorBotones = document.createElement("div");
-  contenedorBotones.className="gap-2 d-grid";
-  colMd6more.appendChild(contenedorBotones);
+    let periodo = document.createElement("span");
+    periodo.className = "beforethan";
+    periodo.innerText = "Hacer antes de " + fecha;
+    colMd6.appendChild(periodo);
 
-  let boton1 = document.createElement("button");
-  boton1.className="btn btn-success";
-  boton1.innerText = "Completar";
-  contenedorBotones.appendChild(boton1);
+    let colMd6more = document.createElement("div");
+    colMd6more.className = "col-md-6 moreInfo mt-2 mt-md-0";
+    row.appendChild(colMd6more);
 
-  let boton2 = document.createElement("button");
-  boton2.className="btn btn-danger";
-  boton2.innerText = "Archivar";
-  contenedorBotones.appendChild(boton2);
+    let contenedorBotones = document.createElement("div");
+    contenedorBotones.className = "gap-2 d-grid";
+    colMd6more.appendChild(contenedorBotones);
 
-  let contenedorDescripcion = document.createElement("div");
-  contenedorDescripcion.className = "col-md-12 mt-2";
-  row.appendChild(contenedorDescripcion);
+    let boton1 = document.createElement("button");
+    boton1.className = "btn btn-success";
+    boton1.innerText = "Completar";
+    contenedorBotones.appendChild(boton1);
 
-  let small = document.createElement("small");
-  small.innerText = descripcion;
-  contenedorDescripcion.appendChild(small);
+    let boton2 = document.createElement("button");
+    boton2.className = "btn btn-danger";
+    boton2.innerText = "Archivar";
+    contenedorBotones.appendChild(boton2);
 
-  main.appendChild(contenedorTarea);
+    let contenedorDescripcion = document.createElement("div");
+    contenedorDescripcion.className = "col-md-12 mt-2";
+    row.appendChild(contenedorDescripcion);
+
+    let small = document.createElement("small");
+    small.innerText = descripcion;
+    contenedorDescripcion.appendChild(small);
+
+    main.appendChild(contenedorTarea);
 }
