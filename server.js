@@ -78,7 +78,44 @@ app.use(express.static('app'))
 app.get("/", (req, res) => {
     res.send("API PABLOHACE v1");
 });
-
+/**
+ * CREAR USUARIO
+ */
+app.post("/usuarios", (req, res) => {
+    const {nombre, email, password} = req.body;
+    if (isString(nombre) && isString(email) && isString(password)) {
+        //¿No habría que preguntar si el nombre existe?
+        usuarioRef.push({
+            nombre,
+            email,
+            password
+        }, (error) => {
+            if (error)
+                res.status(400).send({ "msg": "Ha habido un error al crear el : " + error });
+            else
+                res.status(201).send({ "msg": "Usuario creado" });
+        });
+    } else {
+        res.status(400).send({ "msg": "datos mal introducidos" });
+    }
+    usuarioRef.once("value", (snapshot)=>{
+        console.log(snapshot.val());
+    });
+});
+/**
+ * Validar usuario
+ */
+app.post("/usuarios/modificar", (req, res) => {
+    const {nombre, password} = req.body;
+    usuarioRef.on("child_added", (snapshot) =>{
+        if (snapshot.val().nombre == nombre){
+            return (snapshot.val().password == password);
+        }
+        else{
+            return false;
+        }
+    });
+});
 /**
  * CREAR TAREA
  */
