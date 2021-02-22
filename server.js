@@ -3,7 +3,14 @@
  */
 const express = require("express");
 const firebase = require("firebase-admin");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const JWT = require("jwt-simple");
+
 const { isDate, isNumber, isString, isBoolean } = require("./validator");
+const { checkPath, auth } = require("./auth");
+const { hashString, saltPepperPassword, verifyPassword } = require("./passwordHandler");
+
 
 // configuración de firebase
 const serviceAccount = require("./keyFirebase.json");
@@ -11,66 +18,21 @@ firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     databaseURL: "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app",
 });
+
 const db = firebase.database();
 const tareasRef = db.ref("/tareas");
+const SECRET = "pablohacesecret";
+
+
 
 // configuración de Express
 const app = express();
 const port = 8080;
 app.use(express.json());
-app.use(express.static('app'))
-
-
-// tareasRef.set({
-//     tareaPrueba: {
-//         nombre: "Lavar Ropa",
-//         descripcion: "Tengo que poner la ropa en la la lavadora",
-//         //creador: "usuario_id_de_firebase",
-//         fechaLimite: new Date(),
-//         completada: false,
-//         //fechaCompletada: new Date(),
-//         prioridad: 2,
-//         archivada: false,
-//     },
-//     tareaPrueba2: {
-//         nombre: "Lavar Coche",
-//         descripcion: "Tengo que ir a REPSOL a lavar el coche",
-//         //creador: "usuario_id_de_firebase",
-//         fechaLimite: new Date(),
-//         completada: false,
-//         //fechaCompletada: null,
-//         prioridad: 3,
-//         archivada: false,
-//     },
-// });
-
-/**
- * EJEMPLOS DE VALIDADORES CON EL MODULO VALIDATOR BY PABLOTEAM
- * isString para validar si es un string
- * isNumber para validar si es un número
- * isDate para validar si es una fecha
- * isBoolean para validar si es un booleano
- */
-
-// if (isString("validador de strings")) console.log('Es un String')
-// else console.log('No es un string')
-
-// if (isNumber(289)) console.log('Es un número')
-// else console.log('No es un numero')
-
-// if (isDate(new Date())) console.log('Es una Fecha')
-// else console.log('No es una fecha')
-
-// if (isBoolean(true)) console.log("Es booleano")
-// else console.log("no es booleano")
-
-/**
- * Comandos GitHub:
- *  - Creamos la rama con git branch NOMBRERAMA
- *  - Nos cambiamos con git checkout NOMBRERAMA
- *  - Para unir las ramas git merge NOMBRERAMA
- *  - Es importante saber que debes ir primero a la rama que quieres actualizar con checkout porque se traerá la rama que escribas
- */
+app.use(express.static('app'));
+app.use(auth);
+app.use(cors());
+app.use(cookieParser());
 
 /**
  * EndPoints
@@ -81,13 +43,13 @@ app.get("/", (req, res) => {
 /**
  * CREAR USUARIO
  */
-app.post("/usuarios", (req, res) => {
-    const {nombre, email, password} = req.body;
-    if (isString(nombre) && isString(email) && isString(password)) {
-        //¿No habría que preguntar si el nombre existe?
+app.post("/user", async(req, res) => {
+    const { usuario, password } = req.body;
+    if (isString(usuario) && isString(password)) {
+        usuarioRef.once()
+            //¿No habría que preguntar si el nombre existe? SI :)
         usuarioRef.push({
-            nombre,
-            email,
+            usuario,
             password
         }, (error) => {
             if (error)
@@ -98,23 +60,13 @@ app.post("/usuarios", (req, res) => {
     } else {
         res.status(400).send({ "msg": "datos mal introducidos" });
     }
-    usuarioRef.once("value", (snapshot)=>{
-        console.log(snapshot.val());
-    });
 });
 /**
  * Validar usuario
  */
-app.post("/usuarios/modificar", (req, res) => {
-    const {nombre, password} = req.body;
-    usuarioRef.on("child_added", (snapshot) =>{
-        if (snapshot.val().nombre == nombre){
-            return (snapshot.val().password == password);
-        }
-        else{
-            return false;
-        }
-    });
+app.post("/login", (req, res) => {
+    const { usuario, password } = req.body;
+
 });
 /**
  * CREAR TAREA
