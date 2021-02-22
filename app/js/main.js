@@ -53,10 +53,32 @@ botonEnviar.addEventListener("click", () => {
                 console.log(err);
                 alertaError(err);
             });
+    } else {
+        alertaError('Debes completar todos los campos correctamente para continuar')
     }
 });
 
+async function marcarLista(id) {
+    try {
+        const tarea = await consultarAPI("/tareas/completada/" + id, "PUT");
+        getTareas();
+        alert('Tarea Marcada como Lista');
+        return tarea;
+    } catch (e) {
+        alertaError(e);
+    }
+}
 
+async function marcarArchivada(id) {
+    try {
+        const tarea = await consultarAPI("/tareas/archivar/" + id, "DELETE");
+        getTareas();
+        alert('Tarea eliminada');
+        return tarea;
+    } catch (e) {
+        alertaError(e);
+    }
+}
 
 
 function recogerInformacion(selector) {
@@ -103,8 +125,10 @@ function validarFecha(fecha) {
 
 async function getTareas() {
     try {
-        let tareas = await consultarAPI("/tareas", "GET");
-        if (!tareas) return alertaError('No hay tareas, prueba creando una');
+        let tareas = [];
+        tareas = await consultarAPI("/tareas", "GET");
+        actualizarContenedorTareas();
+        if (tareas.msg) return alertaError('No hay tareas, prueba creando una.');
         tareas.map(tarea => {
             crearTarea(tarea._id, tarea.nombre, tarea.fechaLimite, tarea.descripcion);
         })
@@ -113,6 +137,19 @@ async function getTareas() {
         alertaError(e);
     }
 }
+
+function actualizarContenedorTareas() {
+    const contenedorTareas = document.querySelector("#tareas");
+    if (contenedorTareas) contenedorTareas.remove();
+    const contenedor = document.createElement("div");
+    contenedor.className = "container";
+    contenedor.id = "tareas";
+    const main = document.querySelector("main");
+    main.appendChild(contenedor);
+}
+
+
+
 
 getTareas();
 
@@ -128,7 +165,7 @@ function crearTarea(idTarea, titulo, fecha, descripcion) {
         date = `${day}/${month}/${year}`;
     }
     fecha = date;
-    const main = document.querySelector("main .container");
+    const main = document.querySelector("#tareas");
     let contenedorTarea = document.createElement("div");
     contenedorTarea.id = idTarea;
     contenedorTarea.className = "card tarea";
@@ -169,7 +206,7 @@ function crearTarea(idTarea, titulo, fecha, descripcion) {
 
     let boton2 = document.createElement("button");
     boton2.className = "btn btn-danger";
-    boton2.innerText = "Archivar";
+    boton2.innerText = "Borrar";
     contenedorBotones.appendChild(boton2);
 
     let contenedorDescripcion = document.createElement("div");
@@ -181,4 +218,15 @@ function crearTarea(idTarea, titulo, fecha, descripcion) {
     contenedorDescripcion.appendChild(small);
 
     main.appendChild(contenedorTarea);
+
+    /// creamos los listeners
+
+    boton1.addEventListener("click", () => {
+        marcarLista(idTarea);
+    })
+
+    boton2.addEventListener("click", () => {
+        marcarArchivada(idTarea);
+    })
+
 }

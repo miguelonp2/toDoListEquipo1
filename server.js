@@ -88,7 +88,7 @@ app.post("/tareas", (req, res) => {
     if (isString(descripcion) && isString(nombre) && isString(creador) && isString(fechaLimite) && isNumber(prioridad)) {
         tareasRef.push({
             archivada: false,
-            completa: false,
+            completada: false,
             creador,
             nombre,
             descripcion,
@@ -119,19 +119,21 @@ app.put("/tareas/completada/:id", (req, res) => {
 });
 
 app.get('/tareas', async(req, res) => {
-    const tareas = (await tareasRef.once("value")).val();
-    if (!tareas) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
-    else res.status(200).send(Object.keys(tareas).map((value) => { return {...tareas[value], _id: value } }));
+    const tareas = (await tareasRef.orderByChild('completada').equalTo(false).once("value")).val();
+    if (!tareas) return res.status(404).send({ msg: "Error: no hay tareas para mostrar" });
+    let tareasOrdenadas = Object.keys(tareas).map((value) => {
+        return {...tareas[value], _id: value }
+    }).sort((a, b) => b.prioridad - a.prioridad);
+
+    res.status(200).send(tareasOrdenadas);
 })
 
-app.put('/tareas/archivar/:id', async(req, res) => {
+app.delete('/tareas/archivar/:id', async(req, res) => {
     const tarea = (await tareasRef.child(req.params.id).once("value")).val();
     if (!tarea) return res.status(404).send({ msg: "Error: no existe la tarea que quieres modificar" });
-    tareasRef.child(req.params.id).update({
-        archivada: true
-    }, (err) => {
+    tareasRef.child(req.params.id).remove((err) => {
         if (err) return res.status(400).send({ msg: "Error en firebase, es hora de usar mongodb" });
-        else return res.status(201).send({ msg: "La tarea ha sido modificada con exito" });
+        else return res.status(201).send({ msg: "La tarea ha sido borrada con exito" });
     });
 })
 
