@@ -85,21 +85,25 @@ function recogerInformacion(selector) {
 }
 
 function alertaError(msg) {
-    const contenedor = document.querySelector("#contenedorAlertas");
+    const contenedor = document.createElement("div");
+    const main = document.querySelector("main");
+    main.appendChild(contenedor)
     const alerta = document.createElement("div");
     alerta.classList.add("alert", "alert-danger");
     alerta.innerText = msg;
     contenedor.appendChild(alerta);
-    setTimeout(() => alerta.remove(), 5000);
+    setTimeout(() => contenedor.remove(), 5000);
 }
 
 function alertaSuccess(msg) {
-    const contenedor = document.querySelector("#contenedorAlertas");
+    const contenedor = document.createElement("div");
+    const main = document.querySelector("main");
+    main.appendChild(contenedor)
     const alerta = document.createElement("div");
     alerta.classList.add("alert", "alert-success");
     alerta.innerText = msg;
     contenedor.appendChild(alerta);
-    setTimeout(() => alerta.remove(), 5000);
+    setTimeout(() => contenedor.remove(), 5000);
 }
 
 function validarString(string, maxLength) {
@@ -147,10 +151,6 @@ function actualizarContenedorTareas() {
     main.appendChild(contenedor);
 }
 
-
-
-
-getTareas();
 
 function crearTarea(idTarea, titulo, fecha, descripcion) {
     date = new Date(fecha);
@@ -380,8 +380,6 @@ function formularioCrearTarea() {
 
 }
 
-formularioCrearTarea();
-
 function optionCreator(text, value, parent) {
     let option = document.createElement("option");
     option.innerText = text;
@@ -390,83 +388,201 @@ function optionCreator(text, value, parent) {
 }
 
 
-document.querySelector("#login").addEventListener("submit", (e) => {
-    e.preventDefault();
-    let usuarioLogin = recogerInformacion('usuarioLogin');
-    let passwordLogin = recogerInformacion('passwordLogin');
+function limpiarDom() {
+    let container = document.querySelector("main .container");
+    container.remove();
+
+    let newContainer = document.createElement("div")
+    newContainer.className = "container my-5"
+
+    let main = document.querySelector("main");
+    main.appendChild(newContainer)
+
+}
+
+function crearFormularioRegistro() {
+    limpiarDom();
+    let container = document.querySelector("main .container");
+
+    const row = document.createElement("div");
+    row.className = 'row';
+
+    let col = document.createElement("div");
+    col.className = 'col-md-4';
+    row.appendChild(col);
+
+    let colRegistro = document.createElement("div");
+    colRegistro.className = 'col-md-4';
+    row.appendChild(colRegistro)
+
+    let col3 = document.createElement("div");
+    col3.className = 'col-md-4';
+    row.appendChild(col3);
+
+    let form = document.createElement("form");
+    form.id = "register";
+    colRegistro.appendChild(form);
+
+    let tituloH5 = document.createElement("h5");
+    tituloH5.innerText = 'Crear nueva cuenta';
+    form.appendChild(tituloH5)
+
+    // Crear INPUT USUARIO
+    let groupUsuario = document.createElement("div");
+    groupUsuario.className = "form-group mt-2";
+    let inputUsuario = document.createElement("input");
+    inputUsuario.type = "text";
+    inputUsuario.className = "form-control"
+    inputUsuario.required = true;
+    inputUsuario.name = "usuario";
+    inputUsuario.id = "registerUsuario";
+    inputUsuario.placeholder = "Usuario";
+    groupUsuario.appendChild(inputUsuario);
+    form.appendChild(groupUsuario);
+
+    // crear INPUT PASSWORD
+    let groupPassword = document.createElement("div");
+    groupPassword.className = "form-group mt-2";
+    let inputPassword = document.createElement("input");
+    inputPassword.type = "text";
+    inputPassword.className = "form-control"
+    inputPassword.required = true;
+    inputPassword.name = "password";
+    inputPassword.id = "registerPassword";
+    inputPassword.placeholder = "Password";
+    groupPassword.appendChild(inputPassword);
+    form.appendChild(groupPassword);
+
+    // crea boton
+    let groupBoton = document.createElement("div");
+    groupBoton.className = "form-group mt-2 d-grid";
+    let button = document.createElement("button");
+    button.type = "submit";
+    button.className = "btn btn-primary";
+    button.innerText = "Crear Cuenta";
+    groupBoton.appendChild(button);
+    form.appendChild(groupBoton);
 
 
-})
+    /// crear enlace
+    let divEnlace = document.createElement("div");
+    divEnlace.className = "mt-2 text-center";
+    let enlace = document.createElement("a");
+    enlace.className = "link";
+    enlace.id = "registerLink";
+    enlace.innerText = "¿Ya tienes cuenta? Entrar Ahora"
+    divEnlace.appendChild(enlace);
+    form.appendChild(divEnlace);
 
-function crearFormularioLogin(){
+
+
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        registroUsuario();
+    })
+
+    enlace.addEventListener("click", () => {
+        crearFormularioLogin();
+    })
+
+    container.appendChild(row);
+
+}
+
+function registroUsuario() {
+
+    let usuario = recogerInformacion("registerUsuario");
+    let password = recogerInformacion("registerPassword");
+    if (validarString(usuario, 40) && validarString(password, 40)) {
+        const data = {
+            usuario,
+            password
+        }
+        consultarAPI("/user", "POST", data)
+            .then((data) => {
+
+            })
+            .catch((e) => {
+                alertaError(e);
+            })
+    } else {
+        alertaError(e);
+    }
+
+}
+
+function crearFormularioLogin() {
     let container = document.querySelector("main .container");
 
     let contenedor1 = document.createElement("div");
-    contenedor1.className="row";
+    contenedor1.className = "row";
     container.appendChild(contenedor1);
 
     let col1 = document.createElement("div");
-    col1.className="col-md-4";
+    col1.className = "col-md-4";
     contenedor1.appendChild(col1);
 
     let col2 = document.createElement("div");
-    col2.className="col-md-4";
+    col2.className = "col-md-4";
     contenedor1.appendChild(col2);
 
     let col3 = document.createElement("div");
-    col3.className="col-md-4";
+    col3.className = "col-md-4";
     contenedor1.appendChild(col3);
 
     let formulario = document.createElement('form');
-    formulario.id="login";
+    formulario.id = "login";
     col2.appendChild(formulario);
 
     let tituloFormulario = document.createElement('h5');
-    tituloFormulario.innerText="Entrar en tu cuenta";
+    tituloFormulario.innerText = "Entrar en tu cuenta";
     formulario.appendChild(tituloFormulario);
 
     let campo1 = document.createElement('div');
-    campo1.className="form-group mt-2";
+    campo1.className = "form-group mt-2";
     formulario.appendChild(campo1);
 
     let input1 = document.createElement('input');
-    input1.type="text";
-    input1.className="form-control";
+    input1.type = "text";
+    input1.className = "form-control";
     input1.required = true;
-    input1.name="usuario";
-    input1.id="loginUsuario";
-    input1.placeholder="Nombre de usuario";
+    input1.name = "usuario";
+    input1.id = "loginUsuario";
+    input1.placeholder = "Nombre de usuario";
     campo1.appendChild(input1);
 
     let campo2 = document.createElement('div');
-    campo2.className="form-group mt-2";
+    campo2.className = "form-group mt-2";
     formulario.appendChild(campo2);
 
     let input2 = document.createElement('input');
-    input2.type="password";
-    input2.className="form-control";
+    input2.type = "password";
+    input2.className = "form-control";
     input2.required = true;
-    input2.name="password";
-    input2.id="loginPassword";
-    input2.placeholder="Contraseña";
+    input2.name = "password";
+    input2.id = "loginPassword";
+    input2.placeholder = "Contraseña";
     campo2.appendChild(input2);
 
     let campo3 = document.createElement('div');
-    campo3.className="form-group d-grid mt-2";
+    campo3.className = "form-group d-grid mt-2";
     formulario.appendChild(campo3);
 
     let input3 = document.createElement('input');
-    input3.type="submit";
-    input3.className="btn btn-primary";
+    input3.type = "submit";
+    input3.className = "btn btn-primary";
     campo3.appendChild(input3);
 
     let campo4 = document.createElement('div');
-    campo4.className="mt-2 text-center";
+    campo4.className = "mt-2 text-center";
     formulario.appendChild(campo4);
 
     let input4 = document.createElement('a');
-    input4.id="registerLink";
-    input4.className="link";
-    input4.innerText="¿No tienes cuenta? Registrate ¡Es gratis!";
+    input4.id = "registerLink";
+    input4.className = "link";
+    input4.innerText = "¿No tienes cuenta? Registrate ¡Es gratis!";
     campo4.appendChild(input4);
 }
+
+crearFormularioRegistro();
