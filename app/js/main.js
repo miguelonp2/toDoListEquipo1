@@ -85,21 +85,25 @@ function recogerInformacion(selector) {
 }
 
 function alertaError(msg) {
-    const contenedor = document.querySelector("#contenedorAlertas");
+    const contenedor = document.createElement("div");
+    const main = document.querySelector("main");
+    main.appendChild(contenedor)
     const alerta = document.createElement("div");
     alerta.classList.add("alert", "alert-danger");
     alerta.innerText = msg;
     contenedor.appendChild(alerta);
-    setTimeout(() => alerta.remove(), 5000);
+    setTimeout(() => contenedor.remove(), 5000);
 }
 
 function alertaSuccess(msg) {
-    const contenedor = document.querySelector("#contenedorAlertas");
+    const contenedor = document.createElement("div");
+    const main = document.querySelector("main");
+    main.appendChild(contenedor)
     const alerta = document.createElement("div");
     alerta.classList.add("alert", "alert-success");
     alerta.innerText = msg;
     contenedor.appendChild(alerta);
-    setTimeout(() => alerta.remove(), 5000);
+    setTimeout(() => contenedor.remove(), 5000);
 }
 
 function validarString(string, maxLength) {
@@ -487,6 +491,28 @@ function crearFormularioRegistro() {
     })
 
     container.appendChild(row);
+
+}
+
+function registroUsuario() {
+
+    let usuario = recogerInformacion("registerUsuario");
+    let password = recogerInformacion("registerPassword");
+    if (validarString(usuario, 40) && validarString(password, 40)) {
+        const data = {
+            usuario,
+            password
+        }
+        consultarAPI("/user", "POST", data)
+            .then((data) => {
+
+            })
+            .catch((e) => {
+                alertaError(e);
+            })
+    } else {
+        alertaError(e);
+    }
 
 }
 
