@@ -397,3 +397,76 @@ document.querySelector("#login").addEventListener("submit", (e) => {
 
 
 })
+
+function crearFormularioLogin(){
+    let container = document.querySelector("main .container");
+
+    let contenedor1 = document.createElement("div");
+    contenedor1.className="row";
+    container.appendChild(contenedor1);
+
+    let col1 = document.createElement("div");
+    col1.className="col-md-4";
+    contenedor1.appendChild(col1);
+
+    let col2 = document.createElement("div");
+    col2.className="col-md-4";
+    contenedor1.appendChild(col2);
+
+    let col3 = document.createElement("div");
+    col3.className="col-md-4";
+    contenedor1.appendChild(col3);
+
+    let formulario = document.createElement('form');
+    formulario.id="login";
+    col2.appendChild(formulario);
+
+    let tituloFormulario = document.createElement('h5');
+    tituloFormulario.innerText="Entrar en tu cuenta";
+    formulario.appendChild(tituloFormulario);
+
+    let campo1 = document.createElement('div');
+    campo1.className="form-group mt-2";
+    formulario.appendChild(campo1);
+
+    let input1 = document.createElement('input');
+    input1.type="text";
+    input1.className="form-control";
+    input1.required = true;
+    input1.name="usuario";
+    input1.id="loginUsuario";
+    input1.placeholder="Nombre de usuario";
+    campo1.appendChild(input1);
+
+    let campo2 = document.createElement('div');
+    campo2.className="form-group mt-2";
+    formulario.appendChild(campo2);
+
+    let input2 = document.createElement('input');
+    input2.type="password";
+    input2.className="form-control";
+    input2.required = true;
+    input2.name="password";
+    input2.id="loginPassword";
+    input2.placeholder="Contraseña";
+    campo2.appendChild(input2);
+
+    let campo3 = document.createElement('div');
+    campo3.className="form-group d-grid mt-2";
+    formulario.appendChild(campo3);
+
+    let input3 = document.createElement('input');
+    input3.type="submit";
+    input3.className="btn btn-primary";
+    campo3.appendChild(input3);
+
+    let campo4 = document.createElement('div');
+    campo4.className="mt-2 text-center";
+    formulario.appendChild(campo4);
+
+    let input4 = document.createElement('a');
+    input4.id="registerLink";
+    input4.className="link";
+    input4.innerText="¿No tienes cuenta? Registrate ¡Es gratis!";
+    campo4.appendChild(input4);
+}
