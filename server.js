@@ -22,6 +22,7 @@ firebase.initializeApp({
 const db = firebase.database();
 const tareasRef = db.ref("/tareas");
 const SECRET = "pablohacesecret";
+const usuarioRef = db.ref("/usuarios");
 
 
 
@@ -32,8 +33,7 @@ app.use(express.json());
 app.use(express.static('app'));
 app.use(cors());
 app.use(cookieParser());
-//app.use(auth);
-
+app.use(auth);
 
 /**
  * EndPoints
@@ -47,17 +47,32 @@ app.get("/", (req, res) => {
 app.post("/user", async(req, res) => {
     const { usuario, password } = req.body;
     if (isString(usuario) && isString(password)) {
-        usuarioRef.once()
-            //¿No habría que preguntar si el nombre existe? SI :)
-        usuarioRef.push({
-            usuario,
-            password
-        }, (error) => {
-            if (error)
-                res.status(400).send({ "msg": "Ha habido un error al crear el : " + error });
-            else
-                res.status(201).send({ "msg": "Usuario creado" });
-        });
+            usuarioRef.orderByChild('usuario').equalTo(usuario).once("value").then(snapshot => {
+                console.log("snapshot user: "+snapshot.val());
+                if (snapshot.val()) return true;
+                return false;
+            }).then((respuesta)=>{
+                let existeUsuario = respuesta;
+                console.log("Existe usuario: "+existeUsuario);
+                if(!existeUsuario){
+                    let userInfo = saltPepperPassword(password);
+                    console.log(userInfo);
+                    let passwordEncriptada = userInfo.password;
+                    let salt = userInfo.salt;
+                    usuarioRef.push({
+                        usuario,
+                        "password":passwordEncriptada,
+                        salt
+                    }, (error) => {
+                        if (error) res.status(400).send({ "msg": "Ha habido un error al crear el : " + error });
+                        else res.status(201).send({ "msg": "Usuario creado" });
+                    });
+                }else{
+                    res.status(400).send({ "msg": "el usuario introducido ya existe, pruebe con otro" });
+                }
+            }).catch(e=>{
+                res.status(400).send({"msg": e});
+            });
     } else {
         res.status(400).send({ "msg": "datos mal introducidos" });
     }
@@ -85,10 +100,8 @@ app.post("/tareas", (req, res) => {
             fechaLimite,
             prioridad
         }, (error) => {
-            if (error)
-                res.status(400).send({ "msg": "Ha habido un error al crear la tarea: " + error });
-            else
-                res.status(201).send({ "msg": "Tarea creada" });
+            if (error) res.status(400).send({ "msg": "Ha habido un error al crear la tarea: " + error });
+            else res.status(201).send({ "msg": "Tarea creada" });
         });
     } else {
         res.status(400).send({ "msg": "datos mal introducidos" });
