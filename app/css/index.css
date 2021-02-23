@@ -27,3 +27,8 @@
     margin-bottom: 10px;
 }
 
+.link {
+    cursor: pointer;
+    color: rgb(83, 83, 83);
+    text-decoration: underline;
+}

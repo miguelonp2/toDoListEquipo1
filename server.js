@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(express.static('app'));
 app.use(cors());
 app.use(cookieParser());
-app.use(auth);
+//app.use(auth);
 
 
 /**

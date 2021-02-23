@@ -23,8 +23,7 @@ const consultarAPI = (endpoint, method, data = "") => {
     );
 };
 
-let botonEnviar = document.querySelector("#enviarInformacion");
-botonEnviar.addEventListener("click", () => {
+function clickBotonCrear() {
     let nombre = recogerInformacion("nombre");
     let fechaLimite = new Date(recogerInformacion("fechaLimite"));
     let descripcion = recogerInformacion("descripcion");
@@ -56,7 +55,7 @@ botonEnviar.addEventListener("click", () => {
     } else {
         alertaError('Debes completar todos los campos correctamente para continuar')
     }
-});
+}
 
 async function marcarLista(id) {
     try {
@@ -258,6 +257,7 @@ function formularioCrearTarea() {
     card.appendChild(cardBody)
 
     let form = document.createElement("form");
+    form.id = 'form'
     cardBody.appendChild(form);
 
     let contenedorAlertas = document.createElement("div");
@@ -327,6 +327,7 @@ function formularioCrearTarea() {
     inputDescripcion.className = "form-control";
     inputDescripcion.name = "descripcion";
     inputDescripcion.id = "descripcion";
+    inputDescripcion.placeholder = "Descripción de tu tarea";
     grupoDescripcion.appendChild(inputDescripcion);
 
     // CAMPO PRIORIDAD
@@ -373,8 +374,13 @@ function formularioCrearTarea() {
     inputBotonEnviar.id = "enviarInformacion";
     inputBotonEnviar.innerText = "Crear";
     grupoBotonEnviar.appendChild(inputBotonEnviar);
+    inputBotonEnviar.addEventListener("click", () => {
+        clickBotonCrear();
+    });
 
 }
+
+formularioCrearTarea();
 
 function optionCreator(text, value, parent) {
     let option = document.createElement("option");
@@ -382,3 +388,12 @@ function optionCreator(text, value, parent) {
     option.value = value;
     parent.appendChild(option);
 }
+
+
+document.querySelector("#login").addEventListener("submit", (e) => {
+    e.preventDefault();
+    let usuarioLogin = recogerInformacion('usuarioLogin');
+    let passwordLogin = recogerInformacion('passwordLogin');
+
+
+})
