@@ -86,8 +86,9 @@ function recogerInformacion(selector) {
 
 function alertaError(msg) {
     const contenedor = document.createElement("div");
+    contenedor.className = "container mt-5"
     const main = document.querySelector("main");
-    main.appendChild(contenedor)
+    main.prepend(contenedor)
     const alerta = document.createElement("div");
     alerta.classList.add("alert", "alert-danger");
     alerta.innerText = msg;
@@ -97,8 +98,9 @@ function alertaError(msg) {
 
 function alertaSuccess(msg) {
     const contenedor = document.createElement("div");
+    contenedor.className = "container mt-5"
     const main = document.querySelector("main");
-    main.appendChild(contenedor)
+    main.prepend(contenedor)
     const alerta = document.createElement("div");
     alerta.classList.add("alert", "alert-success");
     alerta.innerText = msg;
@@ -444,7 +446,7 @@ function crearFormularioRegistro() {
     let groupPassword = document.createElement("div");
     groupPassword.className = "form-group mt-2";
     let inputPassword = document.createElement("input");
-    inputPassword.type = "text";
+    inputPassword.type = "password";
     inputPassword.className = "form-control"
     inputPassword.required = true;
     inputPassword.name = "password";
@@ -491,7 +493,6 @@ function crearFormularioRegistro() {
 }
 
 function registroUsuario() {
-
     let usuario = recogerInformacion("registerUsuario");
     let password = recogerInformacion("registerPassword");
     if (validarString(usuario, 40) && validarString(password, 40)) {
@@ -501,9 +502,15 @@ function registroUsuario() {
         }
         consultarAPI("/user", "POST", data)
             .then((data) => {
-
+                if (data.msg == 'el usuario introducido ya existe, pruebe con otro') {
+                    alertaError(data.msg);
+                } else {
+                    crearFormularioLogin();
+                    alertaSuccess(data.msg);
+                }
             })
             .catch((e) => {
+                console.log('pasa por aqui');
                 alertaError(e);
             })
     } else {
@@ -513,8 +520,9 @@ function registroUsuario() {
 }
 
 function crearFormularioLogin() {
-    let container = document.querySelector("main .container");
+    limpiarDom();
 
+    let container = document.querySelector("main .container");
     let contenedor1 = document.createElement("div");
     contenedor1.className = "row";
     container.appendChild(contenedor1);
@@ -583,6 +591,39 @@ function crearFormularioLogin() {
     input4.className = "link";
     input4.innerText = "¿No tienes cuenta? Registrate ¡Es gratis!";
     campo4.appendChild(input4);
+
+    formulario.addEventListener("submit", (e) => {
+        e.preventDefault();
+        loginUsuario();
+    })
+
+    input4.addEventListener("click", () => {
+        crearFormularioRegistro();
+    })
+
+
 }
 
-crearFormularioRegistro();
+crearFormularioLogin()
+
+function loginUsuario() {
+
+    let usuario = recogerInformacion("loginUsuario");
+    let password = recogerInformacion("loginPassword");
+    if (validarString(usuario, 40) && validarString(password, 40)) {
+        const data = {
+            usuario,
+            password
+        }
+        consultarAPI("/login", "POST", data)
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((e) => {
+                alertaError(e);
+            })
+    } else {
+        alertaError(e);
+    }
+
+}
