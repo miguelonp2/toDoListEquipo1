@@ -4,24 +4,24 @@
 
 const API_URL = "http://localhost:8080";
 
-const consultarAPI = (endpoint, method, data = "") => {
-    let options;
-    if (data == "") {
-        options = { method };
-    } else {
-        options = {
-            method,
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        };
-    }
+// const consultarAPI = (endpoint, method, data = "") => {
+//     let options;
+//     if (data == "") {
+//         options = { method };
+//     } else {
+//         options = {
+//             method,
+//             body: JSON.stringify(data),
+//             headers: {
+//                 "Content-Type": "application/json"
+//             }
+//         };
+//     }
 
-    return fetch(`${API_URL}${endpoint}`, options).then((response) =>
-        response.json()
-    );
-};
+//     return fetch(`${API_URL}${endpoint}`, options).then((response) => {
+//         response.json()
+//     });
+// }
 
 function clickBotonCrear() {
     let nombre = recogerInformacion("nombre");
@@ -41,7 +41,15 @@ function clickBotonCrear() {
         };
 
 
-        consultarAPI("/tareas", "POST", nuevaTarea)
+        //consultarAPI("/tareas", "POST", nuevaTarea)
+        fetch(`${API_URL}/tareas`, {
+                method: "POST",
+                body: JSON.stringify(nuevaTarea),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
             .then((data) => {
                 alertaSuccess(data.msg);
                 document.querySelector("#form").reset();
@@ -59,7 +67,8 @@ function clickBotonCrear() {
 
 async function marcarLista(id) {
     try {
-        const tarea = await consultarAPI("/tareas/completada/" + id, "PUT");
+        const response = await fetch(`${API_URL}/tareas/completada/${id}`, { method: "PUT" })
+        const tarea = await response.json();
         getTareas();
         alert('Tarea Marcada como Lista');
         return tarea;
@@ -70,7 +79,8 @@ async function marcarLista(id) {
 
 async function marcarArchivada(id) {
     try {
-        const tarea = await consultarAPI("/tareas/archivar/" + id, "DELETE");
+        const response = await fetch(`${API_URL}/tareas/archivar/${id}`, { method: "DELETE" })
+        const tarea = await response.json();
         getTareas();
         alert('Tarea eliminada');
         return tarea;
@@ -131,11 +141,13 @@ function validarFecha(fecha) {
 async function getTareas() {
     try {
         let tareas = [];
-        tareas = await consultarAPI("/tareas", "GET");
+        const response = await fetch(`${API_URL}/tareas`)
+        tareas = await response.json();
+        console.log(tareas);
         actualizarContenedorTareas();
         if (tareas.msg) return alertaError('No hay tareas, prueba creando una.');
         tareas.map(tarea => {
-            crearTarea(tarea._id, tarea.nombre, tarea.fechaLimite, tarea.descripcion);
+            crearTarea(tarea._id, tarea.nombre, tarea.fechaLimite, tarea.descripcion, tarea.completada);
         })
     } catch (e) {
         console.error(e);
@@ -154,7 +166,7 @@ function actualizarContenedorTareas() {
 }
 
 
-function crearTarea(idTarea, titulo, fecha, descripcion) {
+function crearTarea(idTarea, titulo, fecha, descripcion, completada) {
     date = new Date(fecha);
     let day = date.getDate()
     let month = date.getMonth() + 1
@@ -169,7 +181,8 @@ function crearTarea(idTarea, titulo, fecha, descripcion) {
     const main = document.querySelector("#tareas");
     let contenedorTarea = document.createElement("div");
     contenedorTarea.id = idTarea;
-    contenedorTarea.className = "card tarea";
+    if (completada) contenedorTarea.className = "card tarea bg-secondary";
+    else contenedorTarea.className = "card tarea";
 
     let cardBody = document.createElement("div");
     cardBody.className = "card-body";
@@ -203,7 +216,7 @@ function crearTarea(idTarea, titulo, fecha, descripcion) {
     let boton1 = document.createElement("button");
     boton1.className = "btn btn-success";
     boton1.innerText = "Completar";
-    contenedorBotones.appendChild(boton1);
+    if (!completada) contenedorBotones.appendChild(boton1);
 
     let boton2 = document.createElement("button");
     boton2.className = "btn btn-danger";
@@ -234,6 +247,8 @@ function crearTarea(idTarea, titulo, fecha, descripcion) {
 
 
 function formularioCrearTarea() {
+    limpiarDom();
+
     const main = document.querySelector("main");
 
 
@@ -379,6 +394,7 @@ function formularioCrearTarea() {
     inputBotonEnviar.addEventListener("click", () => {
         clickBotonCrear();
     });
+    getTareas();
 
 }
 
@@ -497,20 +513,26 @@ function registroUsuario() {
     let password = recogerInformacion("registerPassword");
     if (validarString(usuario, 40) && validarString(password, 40)) {
         const data = {
-            usuario,
-            password
-        }
-        consultarAPI("/user", "POST", data)
-            .then((data) => {
-                if (data.msg == 'el usuario introducido ya existe, pruebe con otro') {
-                    alertaError(data.msg);
-                } else {
-                    crearFormularioLogin();
-                    alertaSuccess(data.msg);
+                usuario,
+                password
+            }
+            // consultarAPI("/user", "POST", data)
+        fetch(`${API_URL}/user`, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
                 }
             })
+            .then(response => {
+                if (response.status == 400) throw 'Usuario ya existe';
+                return response.json();
+            })
+            .then(data => {
+                crearFormularioLogin();
+                alertaSuccess(data.msg);
+            })
             .catch((e) => {
-                console.log('pasa por aqui');
                 alertaError(e);
             })
     } else {
@@ -604,7 +626,6 @@ function crearFormularioLogin() {
 
 }
 
-crearFormularioLogin()
 
 function loginUsuario() {
 
@@ -615,15 +636,66 @@ function loginUsuario() {
             usuario,
             password
         }
-        consultarAPI("/login", "POST", data)
-            .then((data) => {
-                console.log(data);
+        fetch(`${API_URL}/login`, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
             })
-            .catch((e) => {
+            .then(response => {
+                if (response.status == '404') throw 'Usuario o contraseña incorrecta';
+                return response.json()
+            })
+            .then((data) => {
+                limpiarDom();
+                crearEnlaceSalir();
+                formularioCrearTarea();
+            }).catch(e => {
                 alertaError(e);
             })
+
     } else {
         alertaError(e);
     }
 
 }
+
+function iniciarApp() {
+    fetch(`${API_URL}/verifyLoggin`)
+        .then(response => {
+            if (response.status == '403') throw 'No está autenticado';
+            return response.json()
+        })
+        .then((data) => {
+            crearEnlaceSalir();
+            formularioCrearTarea();
+        }).catch(e => {
+            crearFormularioLogin()
+            console.log(e);
+        })
+
+}
+
+function logout() {
+    fetch(`${API_URL}/logout`)
+        .then(response => response.json())
+        .then((data) => {
+            crearFormularioLogin();
+        }).catch(e => {
+            console.log(e);
+        })
+}
+
+function crearEnlaceSalir() {
+    let salir = document.createElement("a");
+    salir.innerText = "Salir"
+    let contenedor = document.querySelector("#logout");
+    contenedor.appendChild(salir);
+    salir.addEventListener("click", () => {
+        logout();
+        salir.remove();
+    })
+}
+
+iniciarApp();

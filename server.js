@@ -45,34 +45,34 @@ app.get("/", (req, res) => {
  * CREAR USUARIO
  */
 app.post("/user", async(req, res) => {
+
     const { usuario, password } = req.body;
     if (isString(usuario) && isString(password)) {
-            usuarioRef.orderByChild('usuario').equalTo(usuario).once("value").then(snapshot => {
-                console.log("snapshot user: "+snapshot.val());
-                if (snapshot.val()) return true;
-                return false;
-            }).then((respuesta)=>{
-                let existeUsuario = respuesta;
-                console.log("Existe usuario: "+existeUsuario);
-                if(!existeUsuario){
-                    let userInfo = saltPepperPassword(password);
-                    console.log(userInfo);
-                    let passwordEncriptada = userInfo.password;
-                    let salt = userInfo.salt;
-                    usuarioRef.push({
-                        usuario,
-                        "password":passwordEncriptada,
-                        salt
-                    }, (error) => {
-                        if (error) res.status(400).send({ "msg": "Ha habido un error al crear el : " + error });
-                        else res.status(201).send({ "msg": "Usuario creado" });
-                    });
-                }else{
-                    res.status(400).send({ "msg": "el usuario introducido ya existe, pruebe con otro" });
+        usuarioRef.orderByChild('usuario').equalTo(usuario).once("value").then(snapshot => {
+            console.log("snapshot user: " + snapshot.val());
+            if (snapshot.val()) return true;
+            return false;
+        }).then((respuesta) => {
+            let existeUsuario = respuesta;
+            if (!existeUsuario) {
+                let userInfo = saltPepperPassword(password);
+                let passwordEncriptada = {
+                    password: userInfo.password,
+                    salt: userInfo.salt
                 }
-            }).catch(e=>{
-                res.status(400).send({"msg": e});
-            });
+                usuarioRef.push({
+                    usuario,
+                    password: passwordEncriptada,
+                }, (error) => {
+                    if (error) res.status(400).send({ "msg": "Ha habido un error al crear el : " + error });
+                    else res.status(201).send({ "msg": "Usuario creado" });
+                });
+            } else {
+                res.status(400).send({ "msg": "el usuario introducido ya existe, pruebe con otro" });
+            }
+        }).catch(e => {
+            res.status(400).send({ "msg": e });
+        });
     } else {
         res.status(400).send({ "msg": "datos mal introducidos" });
     }
@@ -80,17 +80,59 @@ app.post("/user", async(req, res) => {
 /**
  * Validar usuario
  */
-app.post("/login", (req, res) => {
+app.post("/login", async(req, res) => {
     const { usuario, password } = req.body;
+    if (isString(usuario) && isString(password)) {
+        let user = (await usuarioRef.orderByChild('usuario').equalTo(usuario).once("value")).val();
+        // order_pepitodecrema
+        if (!user) return res.status(404).send({ msg: "Error algun dato es incorrecto" });
 
+        let keyUser = Object.keys(user)[0];
+        user = user[keyUser];
+
+        if (verifyPassword(password, user.password)) {
+            res.cookie("jwt", JWT.encode({
+                "iat": new Date(),
+                "sub": usuario
+            }, SECRET), { httpOnly: true });
+            res.send({ "msg": "You have logged in!" });
+        } else {
+            res.send({ "msg": "Error algun dato es incorrecto" });
+        }
+
+    } else {
+        res.send({ "msg": "A username and password must be provided" });
+    }
 });
+
+app.get('/verifyLoggin', (req, res) => {
+    try {
+        const { jwt } = req.cookies;
+        const payload = JWT.decode(jwt, SECRET);
+        if (payload) {
+            res.status(200).send({ msg: "ok" });
+        } else {
+            res.status(403).send({ msg: "nop" });
+        }
+    } catch (e) {
+        res.status(403).send({ msg: "nop" });
+    }
+})
+
+app.get('/logout', (req, res) => {
+    res.clearCookie('jwt');
+    res.send({ msg: 'Adios :)' })
+})
+
+
+
 /**
  * CREAR TAREA
  */
 app.post("/tareas", (req, res) => {
-    let { nombre, creador, fechaLimite, descripcion, prioridad } = req.body;
-    creador = 'un usuario';
-    if (isString(descripcion) && isString(nombre) && isString(creador) && isString(fechaLimite) && isNumber(prioridad)) {
+    let { nombre, fechaLimite, descripcion, prioridad } = req.body;
+    const { sub: creador } = req.user;
+    if (isString(descripcion) && isString(nombre) && isString(fechaLimite) && isNumber(prioridad)) {
         tareasRef.push({
             archivada: false,
             completada: false,
@@ -122,11 +164,14 @@ app.put("/tareas/completada/:id", (req, res) => {
 });
 
 app.get('/tareas', async(req, res) => {
-    const tareas = (await tareasRef.orderByChild('completada').equalTo(false).once("value")).val();
+    const { sub: usuario } = req.user;
+
+    const tareas = (await tareasRef.orderByChild('creador').equalTo(usuario).once("value")).val();
     if (!tareas) return res.status(404).send({ msg: "Error: no hay tareas para mostrar" });
     let tareasOrdenadas = Object.keys(tareas).map((value) => {
-        return {...tareas[value], _id: value }
-    }).sort((a, b) => b.prioridad - a.prioridad);
+            return {...tareas[value], _id: value }
+        })
+        .sort((a, b) => b.prioridad - a.prioridad)
 
     res.status(200).send(tareasOrdenadas);
 })

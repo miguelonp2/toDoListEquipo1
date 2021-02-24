@@ -1,4 +1,4 @@
-const excludedPaths = ["/user POST", "/login POST"];
+const excludedPaths = ["/user POST", "/login POST", "/verifyLoggin GET"];
 
 const SECRET = "pablohacesecret";
 const JWT = require("jwt-simple");

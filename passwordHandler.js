@@ -12,6 +12,7 @@ function saltPepperPassword(password, salt = crypto.randomBytes(16).toString("he
 }
 
 function verifyPassword(password, originalPassword) {
+    console.log('Password: ', originalPassword);
     const hashedPassword = saltPepperPassword(password, originalPassword.salt);
     return hashedPassword.password === originalPassword.password;
 }
