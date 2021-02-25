@@ -407,8 +407,9 @@ function optionCreator(text, value, parent) {
 
 
 function limpiarDom() {
-    let container = document.querySelector("main .container");
-    container.remove();
+    let container = document.querySelectorAll("main .container");
+    console.log(container);
+    container.forEach(e=>e.remove());
 
     let newContainer = document.createElement("div")
     newContainer.className = "container my-5"
@@ -599,10 +600,18 @@ function crearFormularioLogin() {
     campo3.className = "form-group d-grid mt-2";
     formulario.appendChild(campo3);
 
-    let input3 = document.createElement('input');
+    let input3 = document.createElement('button');
     input3.type = "submit";
     input3.className = "btn btn-primary";
     campo3.appendChild(input3);
+    input3.innerText="Entrar";
+
+    let google = document.createElement('button');
+    google.type = "button";
+    google.className = "btn btn-success mt-2";
+    campo3.appendChild(google);
+    google.addEventListener('click', getOauthUrl);
+    google.innerText="Google-Login";
 
     let campo4 = document.createElement('div');
     campo4.className = "mt-2 text-center";
@@ -662,6 +671,7 @@ function loginUsuario() {
 }
 
 function iniciarApp() {
+
     fetch(`${API_URL}/verifyLoggin`)
         .then(response => {
             if (response.status == '403') throw 'No está autenticado';
@@ -671,6 +681,7 @@ function iniciarApp() {
             crearEnlaceSalir();
             formularioCrearTarea();
         }).catch(e => {
+            checkGoogleCode();
             crearFormularioLogin()
             console.log(e);
         })
@@ -681,6 +692,7 @@ function logout() {
     fetch(`${API_URL}/logout`)
         .then(response => response.json())
         .then((data) => {
+            limpiarDom();
             crearFormularioLogin();
         }).catch(e => {
             console.log(e);
@@ -696,6 +708,27 @@ function crearEnlaceSalir() {
         logout();
         salir.remove();
     })
+}
+
+function getOauthUrl(){
+    fetch(`${API_URL}/oauthUrl`).then(res=>res.json()).then(data=>{
+        //console.log(data);
+        location.href=data.msg;
+    })
+}
+function checkGoogleCode(){
+    let urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.has('code')){
+        let code = urlParams.get('code');
+        fetch(`${API_URL}/token?code=${code}`).then(res=>{
+            if(res.status>=400) throw "No se ha podido iniciar sesión";
+            return res.json();
+        }).then(token=>{
+            iniciarApp();
+        }).catch(e=>{
+            alertaError(e);
+        })
+    }
 }
 
 iniciarApp();

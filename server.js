@@ -6,6 +6,10 @@ const firebase = require("firebase-admin");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const JWT = require("jwt-simple");
+require("dotenv").config();
+const {google} = require('googleapis');
+const apis = google.getSupportedAPIs();
+//console.log(apis);
 
 const { isDate, isNumber, isString, isBoolean } = require("./validator");
 const { checkPath, auth } = require("./auth");
@@ -19,10 +23,13 @@ firebase.initializeApp({
     databaseURL: "https://the-bridge-e1e42-default-rtdb.europe-west1.firebasedatabase.app",
 });
 
-const db = firebase.database();
+const db = firebase.database(); //Referencia a nuestra bbdd firebase.
 const tareasRef = db.ref("/tareas");
 const SECRET = "pablohacesecret";
 const usuarioRef = db.ref("/usuarios");
+const ID_CLIENT=process.env.ID_CLIENT;
+const ID_SECRET=process.env.ID_SECRET;
+const REDIRECT_URL=process.env.REDIRECT_URL;
 
 
 
@@ -34,6 +41,18 @@ app.use(express.static('app'));
 app.use(cors());
 app.use(cookieParser());
 app.use(auth);
+
+//
+
+const oauth2Client = new google.auth.OAuth2(
+    ID_CLIENT,
+    ID_SECRET,
+    REDIRECT_URL
+  );
+
+  const scopes = ['https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/userinfo.profile',
+  'openid'];
 
 /**
  * EndPoints
@@ -185,6 +204,67 @@ app.delete('/tareas/archivar/:id', async(req, res) => {
     });
 })
 
+//Endpoint para redireccionar a google
+app.get('/oauthUrl/', (req, res)=>{
+    const url = oauth2Client.generateAuthUrl({
+        // If you only need one scope you can pass it as a string
+        scope: scopes
+      });
+      console.log(url);
+      res.status(200).send({"msg":url});
+})
+
+app.get('/token',async(req, res)=>{
+    const {code} = req.query;
+    const {tokens} = await oauth2Client.getToken(code)
+    oauth2Client.setCredentials(tokens);
+    //console.log(tokens);
+    const {access_token} = tokens;
+    let infoUser = google.oauth2({
+        auth: oauth2Client,
+        version: 'v2'
+      });
+      infoUser.userinfo.get(
+        (err, resa)=>{
+          if (err) {
+             console.log(err);
+          } else {
+             //console.log(res);
+             const userId = resa.data.id;
+             const email = resa.data.email;
+             try{
+                let user = await (usuarioRef.orderByChild('usuario').equalTo(email).once("value")).val();
+                if (!user) throw "No existe";
+
+                let keyUser = Object.keys(user)[0];
+                user = user[keyUser];
+                res.cookie("jwt", JWT.encode({
+                    "iat": new Date(),
+                    "sub": email
+                }, SECRET), { httpOnly: true });
+                res.send({ "msg": "You have logged in!" });
+
+             }catch(e){
+                usuarioRef.push({
+                    usuario:email
+                }, (error) => {
+                    if (error) res.status(400).send({ "msg": "Ha habido un error al crear el : " + error });
+                    else{
+                        res.cookie("jwt", JWT.encode({
+                            "iat": new Date(),
+                            "sub": email
+                        }, SECRET), { httpOnly: true });
+                        res.send({ "msg": "You have logged in!" });
+                    }
+                });
+             }
+
+
+          }
+      });
+
+
+})
 /// UN COMENTARIO QUE NO EXISTE EN LA RAMA MAIN
 
 app.listen(port, () => {

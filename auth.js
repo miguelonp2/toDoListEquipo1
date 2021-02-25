@@ -1,12 +1,14 @@
-const excludedPaths = ["/user POST", "/login POST", "/verifyLoggin GET"];
+const excludedPaths = ["/user POST", "/login POST", "/verifyLoggin GET", "/oauthUrl GET", "/token GET"];
 
 const SECRET = "pablohacesecret";
 const JWT = require("jwt-simple");
 
+//Comprueba si el pathname con el método seleccionado están en el array de paths excluidos
 function checkPath(pathname, method) {
     const endpoint = `${pathname} ${method}`;
     return excludedPaths.includes(endpoint);
 }
+
 
 function auth(req, res, next) {
     if (!checkPath(req.path, req.method)) {
